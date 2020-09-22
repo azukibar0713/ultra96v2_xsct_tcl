@@ -57,11 +57,32 @@ static TimerHandle_t xTimer = NULL;
 char HWstring[15] = "Hello World";
 long RxtaskCntr = 0;
 
+
+#define mainUART_COMMAND_CONSOLE_STACK_SIZE	( configMINIMAL_STACK_SIZE * 3UL )
+/* The priority used by the UART command console task. */
+#define mainUART_COMMAND_CONSOLE_TASK_PRIORITY	( configMAX_PRIORITIES - 2 )
+/*
+ * Register commands that can be used with FreeRTOS+CLI.  The commands are
+ * defined in CLI-Commands.c and File-Related-CLI-Command.c respectively.
+ */
+extern void vRegisterSampleCLICommands( void );
+/*
+ * The task that manages the FreeRTOS+CLI input and output.
+ */
+extern void vUARTCommandConsoleStart( uint16_t usStackSize, UBaseType_t uxPriority );
+
 int main( void )
 {
 	const TickType_t x10seconds = pdMS_TO_TICKS( DELAY_10_SECONDS );
 
 	xil_printf( "Hello from Freertos example main\r\n" );
+
+	/* Start the tasks that implements the command console on the UART, as
+	described above. */
+	vUARTCommandConsoleStart( mainUART_COMMAND_CONSOLE_STACK_SIZE, mainUART_COMMAND_CONSOLE_TASK_PRIORITY );
+
+	/* Register the standard CLI commands. */
+	vRegisterSampleCLICommands();
 
 	/* Create the two tasks.  The Tx task is given a lower priority than the
 	Rx task, so the Rx task will leave the Blocked state and pre-empt the Tx

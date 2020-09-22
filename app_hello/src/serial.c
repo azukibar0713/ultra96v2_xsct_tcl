@@ -59,6 +59,8 @@
 /* The UART interrupts of interest when transmitting. */
 #define serTRANSMIT_IINTERRUPT_MASK ( XUARTPS_IXR_TXEMPTY )
 
+#define UART_BASEADDR ( XPAR_PSU_UART_1_BASEADDR )
+
 /*-----------------------------------------------------------*/
 
 /* The UART being used. */
@@ -110,7 +112,7 @@ XUartPs_Config *pxConfig;
 	pxConfig = XUartPs_LookupConfig( XPAR_XUARTPS_0_DEVICE_ID );
 
 	/* Initialise the driver. */
-	xStatus = XUartPs_CfgInitialize( &xUARTInstance, pxConfig, XPAR_PS7_UART_1_BASEADDR );
+	xStatus = XUartPs_CfgInitialize( &xUARTInstance, pxConfig, UART_BASEADDR );
 	configASSERT( xStatus == XST_SUCCESS );
 	( void ) xStatus; /* Remove compiler warning if configASSERT() is not defined. */
 
@@ -125,7 +127,7 @@ XUartPs_Config *pxConfig;
 	( void ) xStatus; /* Remove compiler warning if configASSERT() is not defined. */
 
 	/* Ensure interrupts start clear. */
-	XUartPs_WriteReg( XPAR_PS7_UART_1_BASEADDR, XUARTPS_ISR_OFFSET, XUARTPS_IXR_MASK );
+	XUartPs_WriteReg( UART_BASEADDR, XUARTPS_ISR_OFFSET, XUARTPS_IXR_MASK );
 
 	/* Enable the UART interrupt within the GIC. */
 	XScuGic_Enable( &xInterruptController, XPAR_XUARTPS_1_INTR );
@@ -211,21 +213,21 @@ char cChar;
 	( void ) pvNotUsed;
 
 	/* Read the interrupt ID register to see which interrupt is active. */
-	ulActiveInterrupts = XUartPs_ReadReg(XPAR_PS7_UART_1_BASEADDR,  XUARTPS_IMR_OFFSET);
-	ulActiveInterrupts &= XUartPs_ReadReg(XPAR_PS7_UART_1_BASEADDR,  XUARTPS_ISR_OFFSET);
+	ulActiveInterrupts = XUartPs_ReadReg(UART_BASEADDR,  XUARTPS_IMR_OFFSET);
+	ulActiveInterrupts &= XUartPs_ReadReg(UART_BASEADDR,  XUARTPS_ISR_OFFSET);
 
 	/* Are any receive events of interest active? */
 	if( ( ulActiveInterrupts & serRECEIVE_INTERRUPT_MASK ) != 0 )
 	{
 		/* Read the Channel Status Register to determine if there is any data in
 		the RX FIFO. */
-		ulChannelStatusRegister = XUartPs_ReadReg( XPAR_PS7_UART_1_BASEADDR, XUARTPS_SR_OFFSET );
+		ulChannelStatusRegister = XUartPs_ReadReg( UART_BASEADDR, XUARTPS_SR_OFFSET );
 
 		/* Move data from the Rx FIFO to the Rx queue.  NOTE THE COMMENTS AT THE
 		TOP OF THIS FILE ABOUT USING QUEUES FOR THIS PURPSOE. */
 		while( ( ulChannelStatusRegister & XUARTPS_SR_RXEMPTY ) == 0 )
 		{
-			cChar =	XUartPs_ReadReg( XPAR_PS7_UART_1_BASEADDR, XUARTPS_FIFO_OFFSET );
+			cChar =	XUartPs_ReadReg( UART_BASEADDR, XUARTPS_FIFO_OFFSET );
 
 			/* If writing to the queue unblocks a task, and the unblocked task
 			has a priority above the currently running task (the task that this
@@ -236,7 +238,7 @@ char cChar;
 			interrupt returns directly to the (higher priority) unblocked
 			task. */
 			xQueueSendFromISR( xRxQueue, &cChar, &xHigherPriorityTaskWoken );
-			ulChannelStatusRegister = XUartPs_ReadReg( XPAR_PS7_UART_1_BASEADDR, XUARTPS_SR_OFFSET );
+			ulChannelStatusRegister = XUartPs_ReadReg( UART_BASEADDR, XUARTPS_SR_OFFSET );
 		}
 	}
 
@@ -257,7 +259,7 @@ char cChar;
 			xSemaphoreGiveFromISR( xTxCompleteSemaphore, &xHigherPriorityTaskWoken );
 
 			/* No more data to transmit. */
-			XUartPs_WriteReg( XPAR_PS7_UART_1_BASEADDR, XUARTPS_IDR_OFFSET, XUARTPS_IXR_TXEMPTY );
+			XUartPs_WriteReg( UART_BASEADDR, XUARTPS_IDR_OFFSET, XUARTPS_IXR_TXEMPTY );
 		}
 		else
 		{
@@ -274,7 +276,7 @@ char cChar;
 	portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
 
 	/* Clear the interrupt status. */
-	XUartPs_WriteReg( XPAR_PS7_UART_1_BASEADDR, XUARTPS_ISR_OFFSET, ulActiveInterrupts );
+	XUartPs_WriteReg( UART_BASEADDR, XUARTPS_ISR_OFFSET, ulActiveInterrupts );
 }
 
 
