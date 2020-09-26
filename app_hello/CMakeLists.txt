@@ -28,11 +28,28 @@ message("-----end message after project-----")
 # ------------------
 # Target Build
 # ------------------
+# https://stackoverflow.com/questions/28597351/how-do-i-add-a-library-path-in-cmake
+add_library(xil SHARED IMPORTED) # or STATIC instead of SHARED
+set_target_properties(xil PROPERTIES
+  IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/../bsp/psu_cortexr5_0/lib/libxil.a"
+  INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/../bsp/psu_cortexr5_0/include"
+)
+add_library(freertos SHARED IMPORTED) # or STATIC instead of SHARED
+set_target_properties(freertos PROPERTIES
+  IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/../bsp/psu_cortexr5_0/lib/libfreertos.a"
+  INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/../bsp/psu_cortexr5_0/include"
+)
+
+
 set(TARGET_NAME hello)
 set(EXECTABLE_NAME ${CMAKE_PROJECT_NAME}.elf)
 add_executable(${TARGET_NAME}
  ./src/freertos_hello_world.c)
 include_directories(../bsp/psu_cortexr5_0/include/)
+
+
+
+
 
 # ------------------
 # Library
@@ -45,12 +62,18 @@ find_library(LIBRARY_FREERTOS
  NAMES freertos
  HINTS ${CMAKE_CURRENT_SOURCE_DIR}/../bsp/psu_cortexr5_0/lib/
 )
+
 message("LIBRARY_XIL : " ${LIBRARY_XIL})
 message("LIBRARY_FREERTOS : " ${LIBRARY_FREERTOS})
 
+link_directories(${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/../bsp/psu_cortexr5_0/lib/)
 target_link_libraries(${TARGET_NAME}
- ${LIBRARY_XIL}
- ${LIBRARY_FREERTOS}
+# ${LIBRARY_XIL}
+# ${LIBRARY_FREERTOS}
+ xil
+ freertos
+ gcc
+ c
 )
 
 

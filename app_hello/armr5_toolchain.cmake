@@ -38,9 +38,20 @@ set(CMAKE_C_COMPILER   ${CROSS_PREFIX}gcc)
 #set(CMAKE_CXX_COMPILER ${CROSS_PREFIX}g++)
 #set(CMAKE_LINKER       ${CROSS_PREFIX}ld)
 set(CMAKE_LINKER       ${CROSS_PREFIX}gcc) # SDKではgccになってる.
-#set(CMAKE_AR           ${CROSS_PREFIX}ar)
-#set(CMAKE_RANLIB       ${CROSS_PREFIX}ranlib)
-#set(CMAKE_AS           ${CROSS_PREFIX}as)
-#set(CMAKE_NM           ${CROSS_PREFIX}nm)
-#set(CMAKE_OBJDUMP      ${CROSS_PREFIX}objdump)
+set(CMAKE_AR           ${CROSS_PREFIX}ar)
+set(CMAKE_RANLIB       ${CROSS_PREFIX}ranlib)
+set(CMAKE_AS           ${CROSS_PREFIX}as)
+set(CMAKE_NM           ${CROSS_PREFIX}nm)
+set(CMAKE_OBJDUMP      ${CROSS_PREFIX}objdump)
 
+
+# ------------------
+# Compiler Option
+# ------------------
+set(GCC_COVERAGE_COMPILE_FLAGS "-fmessage-length=0 -mcpu=cortex-r5 -mfloat-abi=hard -mfpu=vfpv3-d16")
+set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
+# ------------------
+# Linker Optoin
+# ------------------
+set(GCC_COVERAGE_LINK_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T ../src/lscript.ld")
+set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}")
