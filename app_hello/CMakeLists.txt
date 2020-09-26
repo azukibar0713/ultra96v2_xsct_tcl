@@ -67,6 +67,8 @@ message("LIBRARY_XIL : " ${LIBRARY_XIL})
 message("LIBRARY_FREERTOS : " ${LIBRARY_FREERTOS})
 
 link_directories(${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/../bsp/psu_cortexr5_0/lib/)
+
+if(0)
 target_link_libraries(${TARGET_NAME}
 # ${LIBRARY_XIL}
 # ${LIBRARY_FREERTOS}
@@ -75,8 +77,16 @@ target_link_libraries(${TARGET_NAME}
  gcc
  c
 )
+else()
+target_link_libraries(${TARGET_NAME}
+ -Wl,--start-group
+ xil
+ freertos
+ gcc
+ c
+ -Wl,--end-group
+)
 
 
-
-
+endif()
 
