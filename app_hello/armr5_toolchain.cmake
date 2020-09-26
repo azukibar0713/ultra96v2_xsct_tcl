@@ -48,10 +48,11 @@ set(CMAKE_OBJDUMP      ${CROSS_PREFIX}objdump)
 # ------------------
 # Compiler Option
 # ------------------
-set(GCC_COVERAGE_COMPILE_FLAGS "-fmessage-length=0 -mcpu=cortex-r5 -mfloat-abi=hard -mfpu=vfpv3-d16")
+add_definitions(-DARMR5 -DMY_DEBUG_INFO)
+set(GCC_COVERAGE_COMPILE_FLAGS "-Wall -O0 -g3 -fmessage-length=0 -mcpu=cortex-r5 -mfloat-abi=hard -mfpu=vfpv3-d16")
 set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
 # ------------------
 # Linker Optoin
 # ------------------
-set(GCC_COVERAGE_LINK_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T ../src/lscript.ld")
+set(GCC_COVERAGE_LINK_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mcpu=cortex-r5 -mfloat-abi=hard -mfpu=vfpv3-d16 -T ../src/lscript.ld")
 set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}")
