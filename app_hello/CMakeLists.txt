@@ -9,9 +9,11 @@ message("CMAKE_SYSTEM_PROCESSOR   : " ${CMAKE_SYSTEM_PROCESSOR})
 message("CMAKE_SYSROOT            : " ${CMAKE_SYSROOT})
 message("-----end message when entry-----")
 
+set(PROJECT_NAME project_name_app_hello)
 cmake_minimum_required(VERSION 3.1)
-project(hello_world C CXX)
+project(${PROJECT_NAME} C CXX)
 
+message("CMAKE_BINARY_DIR         : " ${CMAKE_BINARY_DIR})
 message("CMAKE_CURRENT_SOURCE_DIR : " ${CMAKE_CURRENT_SOURCE_DIR})
 message("CMAKE_SYSTEM_PROCESSOR   : " ${CMAKE_SYSTEM_PROCESSOR})
 message("CMAKE_SYSTEM_NAME        : " ${CMAKE_SYSTEM_NAME})
@@ -24,35 +26,21 @@ message("CMAKE_ASM_OUTPUT_EXTENSION : " ${CMAKE_ASM_OUTPUT_EXTENSION})
 message("CMAKE_C_LINK_EXECUTABLE  : " ${CMAKE_C_LINK_EXECUTABLE})
 message("CMAKE_C_FLAGS            : " ${CMAKE_C_FLAGS})
 message("CMAKE_EXE_LINKER_FLAGS   : " ${CMAKE_EXE_LINKER_FLAGS})
-
-
 message("-----end message after project-----")
+
+# ------------------
+# My Env
+# ------------------
+set(PROJECT_PARENT_DIR ${CMAKE_BINARY_DIR}/../..)
+message("PROJECT_PARENT_DIR : " ${PROJECT_PARENT_DIR})
 
 # ------------------
 # Target Build
 # ------------------
-# https://stackoverflow.com/questions/28597351/how-do-i-add-a-library-path-in-cmake
-add_library(xil SHARED IMPORTED) # or STATIC instead of SHARED
-set_target_properties(xil PROPERTIES
-  IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/../bsp/psu_cortexr5_0/lib/libxil.a"
-  INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/../bsp/psu_cortexr5_0/include"
-)
-add_library(freertos SHARED IMPORTED) # or STATIC instead of SHARED
-set_target_properties(freertos PROPERTIES
-  IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/../bsp/psu_cortexr5_0/lib/libfreertos.a"
-  INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/../bsp/psu_cortexr5_0/include"
-)
-
-
 set(TARGET_NAME hello)
-set(EXECTABLE_NAME ${CMAKE_PROJECT_NAME}.elf)
 add_executable(${TARGET_NAME}
  ./src/freertos_hello_world.c)
 include_directories(../bsp/psu_cortexr5_0/include/)
-
-
-
-
 
 # ------------------
 # Library
@@ -65,29 +53,16 @@ find_library(LIBRARY_FREERTOS
  NAMES freertos
  HINTS ${CMAKE_CURRENT_SOURCE_DIR}/../bsp/psu_cortexr5_0/lib/
 )
-
 message("LIBRARY_XIL : " ${LIBRARY_XIL})
 message("LIBRARY_FREERTOS : " ${LIBRARY_FREERTOS})
-
 link_directories(${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/../bsp/psu_cortexr5_0/lib/)
 
-if(0)
-target_link_libraries(${TARGET_NAME}
-# ${LIBRARY_XIL}
-# ${LIBRARY_FREERTOS}
- xil
- freertos
- gcc
- c
-)
-else()
 target_link_libraries(${TARGET_NAME}
  -Wl,--start-group
- xil
- freertos
+ ${LIBRARY_XIL}
+ ${LIBRARY_FREERTOS}
  gcc
  c
  -Wl,--end-group
 )
-endif()
 
