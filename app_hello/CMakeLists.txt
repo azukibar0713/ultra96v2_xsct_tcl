@@ -22,6 +22,9 @@ message("CMAKE_LINKER             : " ${CMAKE_LINKER})
 message("CMAKE_C_OUTPUT_EXTENSION : " ${CMAKE_C_OUTPUT_EXTENSION})
 message("CMAKE_ASM_OUTPUT_EXTENSION : " ${CMAKE_ASM_OUTPUT_EXTENSION})
 message("CMAKE_C_LINK_EXECUTABLE  : " ${CMAKE_C_LINK_EXECUTABLE})
+message("CMAKE_C_FLAGS            : " ${CMAKE_C_FLAGS})
+message("CMAKE_EXE_LINKER_FLAGS   : " ${CMAKE_EXE_LINKER_FLAGS})
+
 
 message("-----end message after project-----")
 
@@ -86,7 +89,5 @@ target_link_libraries(${TARGET_NAME}
  c
  -Wl,--end-group
 )
-
-
 endif()
 

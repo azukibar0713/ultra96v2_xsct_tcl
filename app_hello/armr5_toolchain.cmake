@@ -54,5 +54,5 @@ set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
 # ------------------
 # Linker Optoin
 # ------------------
-set(GCC_COVERAGE_LINK_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mcpu=cortex-r5 -mfloat-abi=hard -mfpu=vfpv3-d16 -T ../src/lscript.ld")
+set(GCC_COVERAGE_LINK_FLAGS "-mcpu=cortex-r5 -mfloat-abi=hard -mfpu=vfpv3-d16 -T ../src/lscript.ld")
 set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}")
