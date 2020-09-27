@@ -48,7 +48,7 @@ elseif("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 else()
     # ToolChainの設定で、CMAKE_BUILD_TYPEが空になってしまうのでDebugの設定としておく.
     add_definitions(-DARMR5 -DMY_DEBUG_INFO)
-    set(GCC_COVERAGE_COMPILE_FLAGS "-Wall -O0 -g3 -fmessage-length=0 -mcpu=cortex-r5 -mfloat-abi=hard -mfpu=vfpv3-d16")
+    set(GCC_COVERAGE_COMPILE_FLAGS "-Wall -O0 -g3 -fmessage-length=0 -mcpu=cortex-r5 -mfloat-abi=hard -mfpu=vfpv3-d16 -MMD -MP")
 #    message(FATAL_ERROR "FATAL_ERROR! you must add -DCMAKE_BUILD_TYPE=Debug or -DCMAKE_BUILD_TYPE=Release")
 endif()
 
@@ -64,3 +64,7 @@ set(CMAKE_EXE_LINKER_FLAGS  "${GCC_COVERAGE_LINK_FLAGS}")
 
 message("-----end armr5_toolchain.cmake-----")
 
+# ------------------
+# 出力先
+# ------------------
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../Debug/)

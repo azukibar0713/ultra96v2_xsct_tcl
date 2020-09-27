@@ -37,7 +37,7 @@ message("PROJECT_PARENT_DIR : " ${PROJECT_PARENT_DIR})
 # ------------------
 # Target Build
 # ------------------
-set(TARGET_NAME hello)
+set(TARGET_NAME app_hello.elf)
 add_executable(${TARGET_NAME}
  ./src/freertos_hello_world.c)
 include_directories(../bsp/psu_cortexr5_0/include/)
